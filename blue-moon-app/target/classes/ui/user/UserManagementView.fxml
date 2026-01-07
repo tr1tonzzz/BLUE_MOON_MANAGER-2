@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vn.bluemoon.ui.user.UserManagementController" stylesheets="/css/styles.css">
+   <top>
+      <VBox spacing="15.0" styleClass="card" style="-fx-margin: 10px;">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label text="Tìm kiếm người dùng" styleClass="label-subtitle">
+               <font>
+                  <Font name="Arial" size="20.0" />
+               </font>
+            </Label>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+               <TextField fx:id="searchUsernameField" promptText="Tên đăng nhập" prefWidth="180.0" />
+               <TextField fx:id="searchEmailField" promptText="Email" prefWidth="180.0" />
+               <TextField fx:id="searchFullNameField" promptText="Họ và tên" prefWidth="180.0" />
+               <TextField fx:id="searchPhoneField" promptText="Số điện thoại" prefWidth="150.0" />
+               <Button fx:id="searchButton" text="🔍 Tìm kiếm" onAction="#handleSearch" styleClass="button-primary" />
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TableView fx:id="userTable" styleClass="table-view">
+         <columns>
+            <TableColumn fx:id="sttColumn" text="STT" prefWidth="50.0" />
+            <TableColumn fx:id="usernameColumn" text="Tên đăng nhập" prefWidth="150.0" />
+            <TableColumn fx:id="emailColumn" text="Email" prefWidth="200.0" />
+            <TableColumn fx:id="fullNameColumn" text="Họ và tên" prefWidth="200.0" />
+            <TableColumn fx:id="phoneColumn" text="Số điện thoại" prefWidth="150.0" />
+            <TableColumn fx:id="isActiveColumn" text="Trạng thái" prefWidth="100.0" />
+         </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <HBox spacing="10.0" alignment="CENTER_RIGHT" styleClass="card">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Button fx:id="deleteButton" text="🗑️ Xóa" onAction="#handleDelete" styleClass="button-danger" />
+            <Button fx:id="disableButton" text="Vô hiệu hóa" onAction="#handleDisable" styleClass="button-danger" />
+            <Button fx:id="enableButton" text="Kích hoạt" onAction="#handleEnable" styleClass="button-success" />
+            <Button fx:id="requirePasswordChangeButton" text="Yêu cầu đổi mật khẩu" onAction="#handleRequirePasswordChange" styleClass="button-secondary" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
+

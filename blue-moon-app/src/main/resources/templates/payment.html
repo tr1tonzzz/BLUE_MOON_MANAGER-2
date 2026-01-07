@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đóng tiền - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Đóng tiền</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); max-width: 900px; margin: 0 auto;">
+            <h2 style="margin-bottom: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Đóng tiền</h2>
+            
+            <div style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 64px; margin-bottom: 20px;">💰</div>
+                <h3 style="color: #667eea; margin-bottom: 15px;">Chức năng đang được phát triển</h3>
+                <p style="color: #666; margin-bottom: 30px;">Chức năng đóng tiền sẽ sớm được cập nhật. Vui lòng quay lại sau.</p>
+                <a th:href="@{/main}" class="btn btn-primary" style="padding: 12px 30px;">Quay lại trang chủ</a>
+            </div>
+            
+            <!-- Placeholder for future payment form -->
+            <div style="margin-top: 40px; padding: 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd;">
+                <h4 style="color: #667eea; margin-bottom: 15px;">Thông tin thanh toán</h4>
+                <p style="color: #999; font-style: italic;">Form thanh toán sẽ được hiển thị tại đây...</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-icon">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="40" fill="#667eea"/>
+                    <path d="M40 20L25 30V50H20V60H25V70H35V50H45V70H55V60H60V50H55V30L40 20Z" fill="#FFD700" stroke="#FFD700" stroke-width="2"/>
+                    <rect x="30" y="35" width="20" height="15" fill="#FFD700"/>
+                    <rect x="35" y="40" width="10" height="10" fill="#667eea"/>
+                </svg>
+            </div>
+            <h1>Đăng nhập</h1>
+            
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-login">Đăng nhập</button>
+                </div>
+                
+                <div class="form-footer">
+                    <a th:href="@{/forgot-password}" class="link-left">Quên mật khẩu</a>
+                    <a th:href="@{/register}" class="link-right">Đăng ký</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+

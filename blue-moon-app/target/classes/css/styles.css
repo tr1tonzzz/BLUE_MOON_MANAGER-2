@@ -1,0 +1,319 @@
+/* Blue Moon Apartment Management System - Modern UI Styles */
+
+/* Root và Global Styles */
+.root {
+    -fx-font-family: "Arial", "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-base: #ffffff;
+    -fx-background: #f8f9fa;
+}
+
+/* Buttons */
+.button {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial", sans-serif;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);
+    -fx-transition: all 0.3s;
+}
+
+.button-primary {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button-primary:hover {
+    -fx-background-color: #357abd;
+    -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.4), 8, 0, 0, 3);
+}
+
+.button-secondary {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #5a6268;
+}
+
+.button-success {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button-success:hover {
+    -fx-background-color: #218838;
+}
+
+.button-danger {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+}
+
+.button-danger:hover {
+    -fx-background-color: #c82333;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Text Fields */
+.text-field, .password-field, .text-area {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial", sans-serif;
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.05), 2, 0, 0, 1);
+}
+
+.text-field:focused, .password-field:focused, .text-area:focused {
+    -fx-border-color: #4a90e2;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(one-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 2);
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial", sans-serif;
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+}
+
+.combo-box:focused {
+    -fx-border-color: #4a90e2;
+    -fx-border-width: 2px;
+}
+
+/* DatePicker */
+.date-picker {
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial", sans-serif;
+}
+
+.date-picker .text-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+}
+
+.date-picker:focused .text-field {
+    -fx-border-color: #4a90e2;
+    -fx-border-width: 2px;
+}
+
+/* Labels */
+.label-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.label-subtitle {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+}
+
+.label-section {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+    -fx-padding: 10px 0px 5px 0px;
+}
+
+.label-error {
+    -fx-text-fill: #dc3545;
+    -fx-font-size: 12px;
+}
+
+.label-success {
+    -fx-text-fill: #28a745;
+    -fx-font-size: 12px;
+}
+
+/* Cards và Panels */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-padding: 20px;
+}
+
+.panel {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 10px;
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+}
+
+/* Tables */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 10px;
+}
+
+.table-view .table-row-cell {
+    -fx-border-color: #f0f0f0;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #e3f2fd;
+    -fx-text-background-color: #1976d2;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* MenuBar */
+.menu-bar {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 0px;
+}
+
+.menu-bar .menu {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 15px;
+}
+
+.menu-bar .menu:hover {
+    -fx-background-color: #34495e;
+}
+
+.menu-bar .menu-item {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+/* Login Screen */
+.login-container {
+    -fx-background-color: linear-gradient(to bottom right, #667eea 0%, #764ba2 100%);
+}
+
+.login-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 5);
+    -fx-padding: 40px;
+    -fx-max-width: 450px;
+}
+
+/* Main Screen */
+.welcome-panel {
+    -fx-background-color: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+    -fx-padding: 40px;
+    -fx-alignment: center;
+    -fx-spacing: 30px;
+}
+
+.welcome-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 2);
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+/* Function Cards */
+.function-card {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+    -fx-background-radius: 15px;
+    -fx-padding: 30px 20px;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 15px;
+    -fx-border-width: 2px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 3);
+    -fx-transition: all 0.3s;
+}
+
+.function-card:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-effect: dropshadow(three-pass-box, rgba(255,255,255,0.3), 15, 0, 0, 5);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.function-card:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Form Sections */
+.form-section {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.08), 5, 0, 0, 2);
+}
+
+.form-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0px 0px 10px 0px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 0px 0px 1px 0px;
+}
+
+/* Hyperlinks */
+.hyperlink {
+    -fx-text-fill: #4a90e2;
+    -fx-font-size: 12px;
+    -fx-underline: false;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #357abd;
+    -fx-underline: true;
+}
+
+/* Separators */
+.separator {
+    -fx-background-color: #e0e0e0;
+    -fx-pref-height: 1px;
+}
+

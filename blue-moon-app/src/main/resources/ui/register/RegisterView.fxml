@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vn.bluemoon.ui.register.RegisterController" stylesheets="/css/styles.css">
+   <children>
+      <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" styleClass="login-container">
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </padding>
+         <children>
+            <Label text="Đăng ký tài khoản" styleClass="label-title" style="-fx-text-fill: white; -fx-font-size: 32px;">
+               <font>
+                  <Font name="Arial" size="32.0" />
+               </font>
+            </Label>
+            
+            <ScrollPane fitToWidth="true" maxHeight="500.0" styleClass="scroll-pane">
+               <content>
+                  <VBox spacing="15.0" styleClass="login-card" style="-fx-max-width: 500px;">
+                     <TextField fx:id="usernameField" promptText="Tên đăng nhập *" />
+                     
+                     <TextField fx:id="emailField" promptText="Email *" />
+                     
+                     <PasswordField fx:id="passwordField" promptText="Mật khẩu *" />
+                     
+                     <PasswordField fx:id="confirmPasswordField" promptText="Xác nhận mật khẩu *" />
+                     
+                     <TextField fx:id="fullNameField" promptText="Họ và tên *" />
+                     
+                     <TextField fx:id="phoneField" promptText="Số điện thoại" />
+                     
+                     <TextArea fx:id="addressField" promptText="Địa chỉ" prefRowCount="3" />
+                     
+                     <HBox spacing="10.0" alignment="CENTER">
+                        <Button fx:id="registerButton" text="Đăng ký" onAction="#handleRegister" styleClass="button-primary" style="-fx-pref-width: 140px;" />
+                        <Button fx:id="cancelButton" text="Hủy" onAction="#handleCancel" styleClass="button-secondary" style="-fx-pref-width: 140px;" />
+                     </HBox>
+                     
+                     <Label fx:id="errorLabel" text="" styleClass="label-error" visible="false" alignment="CENTER" />
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
+

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý thu phí - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .stats-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            min-width: 150px;
+        }
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .search-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .search-form form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .form-group input, .form-group select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        .data-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .badge-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .badge-warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Quản lý thu phí</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="main-container">
+        <main class="content">
+            <h2>Quản lý thu phí</h2>
+            
+            <!-- Statistics -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Tổng số</h3>
+                    <div class="value" th:text="${totalCount != null ? totalCount : 0}">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Đã thu phí</h3>
+                    <div class="value" style="color: #28a745;" th:text="${paidCount != null ? paidCount : 0}">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Chưa thu phí</h3>
+                    <div class="value" style="color: #dc3545;" th:text="${unpaidCount != null ? unpaidCount : 0}">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Tổng số tiền</h3>
+                    <div class="value" th:text="${totalAmount != null ? (#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">0 đ</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Đã thu</h3>
+                    <div class="value" style="color: #28a745;" th:text="${totalPaidAmount != null ? (#numbers.formatDecimal(totalPaidAmount, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">0 đ</div>
+                </div>
+            </div>
+            
+            <!-- Search Form -->
+            <div class="search-form">
+                <form method="get" th:action="@{/fees}">
+                    <div class="form-group">
+                        <label>Mã căn hộ</label>
+                        <input type="text" name="apartmentCode" th:value="${searchApartmentCode}" placeholder="Mã căn hộ">
+                    </div>
+                    <div class="form-group">
+                        <label>Mã hộ</label>
+                        <input type="text" name="householdCode" th:value="${searchHouseholdCode}" placeholder="Mã hộ">
+                    </div>
+                    <div class="form-group">
+                        <label>Tên chủ hộ</label>
+                        <input type="text" name="ownerName" th:value="${searchOwnerName}" placeholder="Tên chủ hộ">
+                    </div>
+                    <div class="form-group">
+                        <label>Tháng</label>
+                        <select name="month">
+                            <option value="">Tất cả</option>
+                            <option th:each="m : ${#numbers.sequence(1, 12)}" 
+                                    th:value="${m}" 
+                                    th:text="${m}"
+                                    th:selected="${searchMonth != null and searchMonth == m}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Năm</label>
+                        <select name="year">
+                            <option value="">Tất cả</option>
+                            <option th:each="y : ${years}" 
+                                    th:value="${y}" 
+                                    th:text="${y}"
+                                    th:selected="${searchYear != null and searchYear == y}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select name="status">
+                            <option value="all" th:selected="${searchStatus == 'all'}">Tất cả</option>
+                            <option value="paid" th:selected="${searchStatus == 'paid'}">Đã thu phí</option>
+                            <option value="unpaid" th:selected="${searchStatus == 'unpaid'}">Chưa thu phí</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Tìm kiếm</button>
+                            <a th:href="@{/fees}" class="btn">Làm mới</a>
+                            <a th:if="${canManage}" th:href="@{/fee-types}" class="btn btn-primary">Quản lý khoản thu</a>
+                            <button th:if="${canManage}" type="button" class="btn btn-primary" onclick="openAddFeeModal()">Thêm thu phí</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Messages -->
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+            
+            <!-- Fee Collections Table -->
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã căn hộ</th>
+                        <th>Mã hộ</th>
+                        <th>Tên chủ hộ</th>
+                        <th>Tháng/Năm</th>
+                        <th class="text-right">Số tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Hạn thu phí</th>
+                        <th>Ngày thu</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${fees == null or fees.isEmpty()}">
+                        <td colspan="10" class="text-center">Không có dữ liệu</td>
+                    </tr>
+                    <tr th:each="fee, iterStat : ${fees}">
+                        <td th:text="${iterStat.count}">1</td>
+                        <td th:text="${fee.apartmentCode}">-</td>
+                        <td th:text="${fee.householdCode}">-</td>
+                        <td th:text="${fee.ownerName}">-</td>
+                        <td th:text="${fee.monthYearDisplay}">-</td>
+                        <td class="text-right" th:text="${fee.amount != null ? (#numbers.formatDecimal(fee.amount, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">-</td>
+                        <td>
+                            <span th:if="${fee.status == 'paid'}" class="badge badge-success" th:text="${fee.statusDisplay}">Đã thu phí</span>
+                            <span th:if="${fee.status == 'unpaid'}" class="badge badge-danger" th:text="${fee.statusDisplay}">Chưa thu phí</span>
+                            <span th:if="${fee.status == 'partial_paid'}" class="badge badge-warning" th:text="${fee.statusDisplay}">Đã thanh toán 1 phần</span>
+                            <span th:if="${fee.status == 'overpaid'}" class="badge badge-warning" th:text="${fee.statusDisplay}">Nộp dư</span>
+                        </td>
+                        <td>
+                            <span th:if="${fee.paymentDeadline != null}" th:text="${#temporals.format(fee.paymentDeadline, 'dd/MM/yyyy')}">-</span>
+                            <span th:if="${fee.paymentDeadline == null}" style="color: #999;">-</span>
+                        </td>
+                        <td th:text="${fee.paymentDate != null ? #temporals.format(fee.paymentDate, 'dd/MM/yyyy') : '-'}">-</td>
+                        <td>
+                            <button th:if="${fee.status != 'paid' and canCollect}" 
+                                    class="btn btn-sm" 
+                                    th:onclick="'markAsPaid(' + ${fee.id} + ')'">Đánh dấu đã thu</button>
+                            <span th:if="${fee.status == 'paid' or !canCollect}" style="color: #999;">-</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
+    </div>
+    
+    <!-- Add Fee Modal - Chọn khoản thu để thu phí -->
+    <div id="addFeeModal" class="modal" th:if="${canManage}">
+        <div class="modal-content" style="max-width: 850px; max-height: 90vh; overflow-y: auto;">
+            <span class="close" onclick="closeAddFeeModal()">&times;</span>
+            <h2 style="margin-top: 0; padding-right: 30px;">Thêm thu phí</h2>
+            <p style="color: #666; margin-bottom: 20px;">Chọn khoản thu và hộ dân để tạo hóa đơn</p>
+            
+            <div th:if="${feeTypes == null or feeTypes.isEmpty()}" style="padding: 20px; text-align: center; color: #999;">
+                <p>Chưa có khoản thu nào. Vui lòng tạo khoản thu trong <a th:href="@{/fee-types}">Quản lý khoản thu</a> trước.</p>
+            </div>
+            
+            <div th:if="${feeTypes != null and !feeTypes.isEmpty()}">
+                <form method="post" th:action="@{/fees/collect-from-type}" id="collectFeeForm">
+                    <input type="hidden" name="feeTypeId" id="selectedFeeTypeId">
+                    <input type="hidden" name="residentId" id="selectedResidentId">
+                    <input type="hidden" name="householdId" id="selectedHouseholdId">
+                    
+                    <!-- Chọn khoản thu -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-weight: bold; margin-bottom: 10px; display: block;">Chọn khoản thu *</label>
+                        <div style="max-height: 250px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                            <table class="data-table" style="width: 100%; margin: 0;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">Chọn</th>
+                                        <th>Tên khoản thu</th>
+                                        <th>Mô tả</th>
+                                        <th style="text-align: right;">Số tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="feeType : ${feeTypes}" style="cursor: pointer;" 
+                                        th:onclick="'selectFeeType(' + ${feeType.id} + ')'">
+                                        <td style="text-align: center;">
+                                            <input type="radio" name="selectedFeeType" th:value="${feeType.id}" 
+                                                   th:id="'feeType_' + ${feeType.id}" 
+                                                   style="cursor: pointer;">
+                                        </td>
+                                        <td th:text="${feeType.name}" style="font-weight: bold;"></td>
+                                        <td th:text="${feeType.description != null ? feeType.description : '-'}" 
+                                            style="color: #666; font-size: 13px;"></td>
+                                        <td style="text-align: right; font-weight: bold; color: #667eea;" 
+                                            th:text="${feeType.defaultAmount != null ? (#numbers.formatDecimal(feeType.defaultAmount, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Chọn hộ dân -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <input type="checkbox" id="selectAllHouseholds" onchange="toggleHouseholdSelect()" style="width: auto;">
+                            <span style="font-weight: bold;">Thu phí cho tất cả các hộ dân</span>
+                        </label>
+                        
+                        <!-- Tìm kiếm hộ dân -->
+                        <div style="margin-bottom: 15px; padding: 15px; background: #f9f9f9; border-radius: 5px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                                <div>
+                                    <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px;">Tìm theo chủ hộ</label>
+                                    <input type="text" id="searchOwnerName" placeholder="Nhập tên chủ hộ" 
+                                           onkeyup="filterHouseholds()" 
+                                           style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px;">Tìm theo mã căn hộ</label>
+                                    <input type="text" id="searchApartmentCode" placeholder="Nhập mã căn hộ" 
+                                           onkeyup="filterHouseholds()" 
+                                           style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px;">Tìm theo mã hộ</label>
+                                    <input type="text" id="searchHouseholdCode" placeholder="Nhập mã hộ" 
+                                           onkeyup="filterHouseholds()" 
+                                           style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+                                </div>
+                            </div>
+                            <button type="button" onclick="clearHouseholdSearch()" style="padding: 6px 15px; background: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px;">Xóa bộ lọc</button>
+                        </div>
+                        
+                        <!-- Bảng danh sách hộ dân -->
+                        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px;">
+                            <table class="data-table" style="width: 100%; margin: 0;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">Chọn</th>
+                                        <th>Tên chủ hộ</th>
+                                        <th>Mã căn hộ</th>
+                                        <th>Mã hộ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="householdTableBody">
+                                    <tr th:each="household : ${households}" 
+                                        class="household-row"
+                                        th:data-owner-name="${household.fullName != null ? household.fullName.toLowerCase() : ''}"
+                                        th:data-apartment-code="${household.apartmentCode != null ? household.apartmentCode.toLowerCase() : ''}"
+                                        th:data-household-code="${household.householdCode != null ? household.householdCode.toLowerCase() : ''}"
+                                        th:data-resident-id="${household.id > 0 ? household.id : household.householdId}"
+                                        th:data-household-id="${household.householdId}"
+                                        style="cursor: pointer;"
+                                        th:onclick="'selectHousehold(' + ${household.id > 0 ? household.id : household.householdId} + ', ' + ${household.householdId} + ')'">
+                                        <td style="text-align: center;">
+                                            <input type="radio" name="selectedHousehold" 
+                                                   th:value="${household.id > 0 ? household.id : household.householdId}"
+                                                   th:id="'household_' + ${household.id > 0 ? household.id : household.householdId}"
+                                                   style="cursor: pointer;">
+                                        </td>
+                                        <td th:text="${household.fullName}" style="font-weight: bold;"></td>
+                                        <td th:text="${household.apartmentCode != null ? household.apartmentCode : '-'}"></td>
+                                        <td th:text="${household.householdCode != null ? household.householdCode : '-'}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div id="noHouseholdResults" style="display: none; padding: 20px; text-align: center; color: #999;">
+                                Không tìm thấy hộ dân nào phù hợp
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tháng/Năm -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label>Tháng</label>
+                            <select name="month" id="collectMonth" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <option th:each="m : ${#numbers.sequence(1, 12)}" 
+                                        th:value="${m}" 
+                                        th:text="'Tháng ' + ${m}"
+                                        th:selected="${m == #temporals.month(T(java.time.LocalDate).now())}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Năm</label>
+                            <select name="year" id="collectYear" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                                <option th:each="y : ${years}" 
+                                        th:value="${y}" 
+                                        th:text="${y}"
+                                        th:selected="${y == #temporals.year(T(java.time.LocalDate).now())}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Hạn thu phí -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label>Hạn thu phí (tùy chọn)</label>
+                        <input type="date" name="paymentDeadline" id="paymentDeadlineInput" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        <small style="color: #666; font-size: 12px;">Ngày hết hạn để nộp phí. Để trống nếu không có hạn.</small>
+                    </div>
+                    
+                    <div class="btn-group" style="justify-content: center; margin-top: 20px;">
+                        <button type="submit" class="btn btn-primary" style="padding: 12px 40px; font-size: 16px;">Thu phí</button>
+                        <button type="button" class="btn" onclick="closeAddFeeModal()">Hủy</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mark Paid Modal (Thu phí) - Chỉ Kế toán -->
+    <div id="markPaidModal" class="modal" th:if="${canCollect}">
+        <div class="modal-content">
+            <span class="close" onclick="closeMarkPaidModal()">&times;</span>
+            <h2>Thu phí</h2>
+            <form method="post" th:action="@{/fees/mark-paid}">
+                <input type="hidden" name="feeId" id="feeIdInput">
+                <div class="form-group">
+                    <label>
+                        Tên khoản thu
+                        <button type="button" class="btn-select" onclick="selectFeeType()">Chọn</button>
+                    </label>
+                    <input type="text" id="feeTypeDisplay" readonly placeholder="Chọn khoản thu">
+                </div>
+                <div class="form-group">
+                    <label>
+                        Tên người nộp
+                        <button type="button" class="btn-select" onclick="selectPayer()">Chọn</button>
+                    </label>
+                    <input type="text" id="payerDisplay" readonly placeholder="Chọn người nộp">
+                </div>
+                <div class="form-group">
+                    <label>Ngày nộp *</label>
+                    <input type="date" name="paymentDate" id="paymentDateInput" required>
+                </div>
+                <div class="form-group">
+                    <label>Phương thức thanh toán *</label>
+                    <select name="paymentMethod" required>
+                        <option value="Tiền mặt">Tiền mặt</option>
+                        <option value="Chuyển khoản">Chuyển khoản</option>
+                        <option value="Thẻ tín dụng">Thẻ tín dụng</option>
+                    </select>
+                </div>
+                <div class="btn-group" style="justify-content: center; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 40px; font-size: 16px;">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function openAddFeeModal() {
+            document.getElementById('addFeeModal').style.display = 'block';
+            // Reset form
+            const radios = document.querySelectorAll('input[name="selectedFeeType"]');
+            radios.forEach(radio => radio.checked = false);
+            document.getElementById('selectedFeeTypeId').value = '';
+            document.getElementById('selectAllHouseholds').checked = false;
+            
+            // Reset household selection
+            const householdRadios = document.querySelectorAll('input[name="selectedHousehold"]');
+            householdRadios.forEach(radio => {
+                radio.checked = false;
+                radio.disabled = false;
+            });
+            document.getElementById('selectedResidentId').value = '';
+            document.getElementById('selectedHouseholdId').value = '';
+            
+            // Reset search inputs
+            clearHouseholdSearch();
+            
+            // Enable search inputs
+            document.getElementById('searchOwnerName').disabled = false;
+            document.getElementById('searchApartmentCode').disabled = false;
+            document.getElementById('searchHouseholdCode').disabled = false;
+        }
+        
+        function closeAddFeeModal() {
+            document.getElementById('addFeeModal').style.display = 'none';
+        }
+        
+        function selectFeeType(feeTypeId) {
+            // Check the radio button
+            document.getElementById('feeType_' + feeTypeId).checked = true;
+            document.getElementById('selectedFeeTypeId').value = feeTypeId;
+        }
+        
+        function toggleHouseholdSelect() {
+            const selectAll = document.getElementById('selectAllHouseholds');
+            const householdTable = document.getElementById('householdTableBody');
+            if (selectAll.checked) {
+                // Disable selection in table
+                const radios = document.querySelectorAll('input[name="selectedHousehold"]');
+                radios.forEach(radio => {
+                    radio.disabled = true;
+                    radio.checked = false;
+                });
+                document.getElementById('selectedResidentId').value = '';
+                document.getElementById('selectedHouseholdId').value = '';
+                // Disable search inputs
+                document.getElementById('searchOwnerName').disabled = true;
+                document.getElementById('searchApartmentCode').disabled = true;
+                document.getElementById('searchHouseholdCode').disabled = true;
+            } else {
+                // Enable selection in table
+                const radios = document.querySelectorAll('input[name="selectedHousehold"]');
+                radios.forEach(radio => radio.disabled = false);
+                // Enable search inputs
+                document.getElementById('searchOwnerName').disabled = false;
+                document.getElementById('searchApartmentCode').disabled = false;
+                document.getElementById('searchHouseholdCode').disabled = false;
+            }
+        }
+        
+        function filterHouseholds() {
+            const ownerName = document.getElementById('searchOwnerName').value.toLowerCase().trim();
+            const apartmentCode = document.getElementById('searchApartmentCode').value.toLowerCase().trim();
+            const householdCode = document.getElementById('searchHouseholdCode').value.toLowerCase().trim();
+            
+            const rows = document.querySelectorAll('.household-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const rowOwnerName = row.getAttribute('data-owner-name') || '';
+                const rowApartmentCode = row.getAttribute('data-apartment-code') || '';
+                const rowHouseholdCode = row.getAttribute('data-household-code') || '';
+                
+                const matchesOwnerName = ownerName === '' || rowOwnerName.includes(ownerName);
+                const matchesApartmentCode = apartmentCode === '' || rowApartmentCode.includes(apartmentCode);
+                const matchesHouseholdCode = householdCode === '' || rowHouseholdCode.includes(householdCode);
+                
+                if (matchesOwnerName && matchesApartmentCode && matchesHouseholdCode) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Show/hide "no results" message
+            const noResults = document.getElementById('noHouseholdResults');
+            if (visibleCount === 0 && (ownerName !== '' || apartmentCode !== '' || householdCode !== '')) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+        
+        function clearHouseholdSearch() {
+            document.getElementById('searchOwnerName').value = '';
+            document.getElementById('searchApartmentCode').value = '';
+            document.getElementById('searchHouseholdCode').value = '';
+            filterHouseholds();
+        }
+        
+        function selectHousehold(residentId, householdId) {
+            // Uncheck select all checkbox
+            document.getElementById('selectAllHouseholds').checked = false;
+            toggleHouseholdSelect();
+            
+            // Check the radio button for this household
+            const radio = document.getElementById('household_' + residentId);
+            if (radio) {
+                radio.checked = true;
+            }
+            
+            // Set hidden inputs
+            document.getElementById('selectedResidentId').value = residentId;
+            document.getElementById('selectedHouseholdId').value = householdId;
+        }
+        
+        // Handle radio button selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const radios = document.querySelectorAll('input[name="selectedFeeType"]');
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        document.getElementById('selectedFeeTypeId').value = this.value;
+                    }
+                });
+            });
+            
+            // Handle form submission
+            const form = document.getElementById('collectFeeForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const selectedFeeTypeId = document.getElementById('selectedFeeTypeId').value;
+                    if (!selectedFeeTypeId) {
+                        e.preventDefault();
+                        alert('Vui lòng chọn một khoản thu để thu phí');
+                        return false;
+                    }
+                    
+                    // Check if select all or specific household
+                    const selectAll = document.getElementById('selectAllHouseholds').checked;
+                    const selectedHouseholdRadio = document.querySelector('input[name="selectedHousehold"]:checked');
+                    const residentIdInput = document.getElementById('selectedResidentId');
+                    const householdIdInput = document.getElementById('selectedHouseholdId');
+                    const residentId = residentIdInput.value.trim();
+                    const householdId = householdIdInput.value.trim();
+                    
+                    console.log('DEBUG: Form submit - selectAll:', selectAll);
+                    console.log('DEBUG: Form submit - selectedHouseholdRadio:', selectedHouseholdRadio);
+                    console.log('DEBUG: Form submit - residentId:', residentId);
+                    console.log('DEBUG: Form submit - householdId:', householdId);
+                    
+                    if (selectAll) {
+                        // Thu phí cho tất cả - remove inputs from form
+                        console.log('DEBUG: Thu phí cho TẤT CẢ các hộ dân');
+                        residentIdInput.value = '';
+                        householdIdInput.value = '';
+                        residentIdInput.removeAttribute('name');
+                        householdIdInput.removeAttribute('name');
+                    } else {
+                        // Thu phí cho một hộ cụ thể - validate và ensure inputs have name
+                        if (!selectedHouseholdRadio || !residentId || !householdId) {
+                            e.preventDefault();
+                            alert('Vui lòng chọn "Thu phí cho tất cả các hộ dân" hoặc chọn một hộ dân cụ thể');
+                            return false;
+                        }
+                        console.log('DEBUG: Thu phí cho một hộ cụ thể - residentId:', residentId, ', householdId:', householdId);
+                        // Ensure inputs have name attribute
+                        residentIdInput.setAttribute('name', 'residentId');
+                        householdIdInput.setAttribute('name', 'householdId');
+                    }
+                });
+            }
+            
+            // Handle household radio button selection
+            const householdRadios = document.querySelectorAll('input[name="selectedHousehold"]');
+            householdRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        document.getElementById('selectAllHouseholds').checked = false;
+                        toggleHouseholdSelect();
+                        const row = this.closest('tr');
+                        const residentId = row.getAttribute('data-resident-id');
+                        const householdId = row.getAttribute('data-household-id');
+                        document.getElementById('selectedResidentId').value = residentId;
+                        document.getElementById('selectedHouseholdId').value = householdId || '';
+                    }
+                });
+            });
+        });
+        
+        
+        function markAsPaid(feeId) {
+            document.getElementById('feeIdInput').value = feeId;
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentDateInput').value = today;
+            document.getElementById('markPaidModal').style.display = 'block';
+        }
+        
+        function closeMarkPaidModal() {
+            document.getElementById('markPaidModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const addModal = document.getElementById('addFeeModal');
+            const markModal = document.getElementById('markPaidModal');
+            if (event.target == addModal) {
+                addModal.style.display = 'none';
+            }
+            if (event.target == markModal) {
+                markModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

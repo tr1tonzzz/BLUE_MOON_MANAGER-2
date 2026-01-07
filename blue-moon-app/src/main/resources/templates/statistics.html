@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thống kê - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Thống kê</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="stats-page">
+        <div class="stats-header">
+            <div class="stats-title">THÔNG KÊ CÁC KHOẢN ĐÃ ĐÓNG GÓP</div>
+            <div class="stats-actions">
+                <button class="btn btn-primary" onclick="createReport()">Tạo báo cáo</button>
+                <button class="btn btn-primary" onclick="exportFile()">Xuất file</button>
+            </div>
+        </div>
+        
+        <!-- Statistics Summary -->
+        <div class="metrics-grid" style="margin-bottom: 20px; max-width: 100%;">
+            <div class="metric-card" style="min-width: 0;">
+                <div class="metric-value" th:text="${totalCount != null ? totalCount : 0}">0</div>
+                <div class="metric-label">Tổng số</div>
+            </div>
+            <div class="metric-card" style="min-width: 0;">
+                <div class="metric-value" style="color: #28a745;" th:text="${paidCount != null ? paidCount : 0}">0</div>
+                <div class="metric-label">Đã đóng</div>
+            </div>
+            <div class="metric-card" style="min-width: 0;">
+                <div class="metric-value" style="color: #dc3545;" th:text="${unpaidCount != null ? unpaidCount : 0}">0</div>
+                <div class="metric-label">Chưa đóng</div>
+            </div>
+        </div>
+        
+        <!-- Statistics Table -->
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+            <table class="data-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">STT</th>
+                        <th style="width: auto; min-width: 150px;">Tên</th>
+                        <th style="width: auto; min-width: 120px;">Mã</th>
+                        <th style="width: auto; min-width: 120px;">Số tiền</th>
+                        <th style="width: auto; min-width: 120px;">Ngày đóng</th>
+                        <th style="width: auto; min-width: 120px;">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${fees == null or fees.isEmpty()}">
+                        <td colspan="6" style="text-align: center; padding: 20px;">Không có dữ liệu</td>
+                    </tr>
+                    <tr th:each="fee, iterStat : ${fees}">
+                        <td style="text-align: center; width: 60px;" th:text="${iterStat.count}">1</td>
+                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" th:text="${fee.ownerName}">-</td>
+                        <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" th:text="${fee.householdCode}">-</td>
+                        <td style="text-align: right; white-space: nowrap;" th:text="${fee.amount != null ? (#numbers.formatDecimal(fee.amount, 0, 'COMMA', 0, 'POINT') + ' đ') : '0 đ'}">-</td>
+                        <td style="text-align: center; white-space: nowrap;" th:text="${fee.paymentDate != null ? #temporals.format(fee.paymentDate, 'dd/MM/yyyy') : '-'}">-</td>
+                        <td style="white-space: nowrap;">
+                            <span th:if="${fee.status == 'paid'}" class="badge badge-success">Đã đóng</span>
+                            <span th:if="${fee.status == 'unpaid'}" class="badge badge-danger">Chưa đóng</span>
+                            <span th:if="${fee.status == 'partial_paid'}" class="badge badge-warning">Đã thanh toán 1 phần</span>
+                            <span th:if="${fee.status == 'overpaid'}" class="badge badge-warning">Nộp dư</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        function createReport() {
+            alert('Chức năng tạo báo cáo đang được phát triển...');
+        }
+        
+        function exportFile() {
+            alert('Chức năng xuất file đang được phát triển...');
+        }
+    </script>
+</body>
+</html>
+

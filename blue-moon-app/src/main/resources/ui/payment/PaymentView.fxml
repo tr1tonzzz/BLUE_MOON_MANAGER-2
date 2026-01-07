@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vn.bluemoon.ui.payment.PaymentController" stylesheets="/css/styles.css">
+   <top>
+      <VBox spacing="15.0" styleClass="card" style="-fx-margin: 10px;">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label text="Đóng tiền" styleClass="label-subtitle">
+               <font>
+                  <Font name="Arial" size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="totalRemainingLabel" text="Tổng số tiền cần đóng: 0 đ" styleClass="label-section" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TableView fx:id="feeTable" styleClass="table-view">
+         <columns>
+            <TableColumn fx:id="monthYearColumn" text="Tháng/Năm" prefWidth="120.0" />
+            <TableColumn fx:id="amountColumn" text="Tổng tiền" prefWidth="150.0" />
+            <TableColumn fx:id="paidAmountColumn" text="Đã nộp" prefWidth="150.0" />
+            <TableColumn fx:id="remainingColumn" text="Còn lại" prefWidth="150.0" />
+            <TableColumn fx:id="statusColumn" text="Trạng thái" prefWidth="150.0" />
+         </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <VBox spacing="15.0" styleClass="card">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label text="Thanh toán" styleClass="label-section" style="-fx-font-size: 16px;" />
+            <Label fx:id="selectedFeeInfoLabel" text="Chọn khoản phí cần thanh toán" style="-fx-text-fill: #7f8c8d;" />
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+               <Label text="Khoản phí:" style="-fx-min-width: 100px;" />
+               <ComboBox fx:id="feeComboBox" prefWidth="300.0" />
+            </HBox>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+               <Label text="Số tiền:" style="-fx-min-width: 100px;" />
+               <TextField fx:id="amountField" promptText="Nhập số tiền" prefWidth="200.0" />
+            </HBox>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+               <Label text="Phương thức:" style="-fx-min-width: 100px;" />
+               <ComboBox fx:id="paymentMethodComboBox" prefWidth="200.0" />
+            </HBox>
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+               <Button fx:id="payButton" text="💳 Thanh toán" onAction="#handlePay" styleClass="button-primary" />
+            </HBox>
+         </children>
+      </VBox>
+   </bottom>
+</BorderPane>
+

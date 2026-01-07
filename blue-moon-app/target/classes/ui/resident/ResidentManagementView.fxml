@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vn.bluemoon.ui.resident.ResidentManagementController" stylesheets="/css/styles.css">
+   <top>
+      <VBox spacing="15.0" styleClass="card" style="-fx-margin: 10px;">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label text="Quản lý nhân khẩu" styleClass="label-subtitle">
+               <font>
+                  <Font name="Arial" size="20.0" />
+               </font>
+            </Label>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+               <TextField fx:id="searchNameField" promptText="Tên nhân khẩu" prefWidth="200.0" />
+               <TextField fx:id="searchApartmentCodeField" promptText="Mã căn hộ" prefWidth="150.0" />
+               <TextField fx:id="searchHouseholdCodeField" promptText="Mã hộ dân" prefWidth="150.0" />
+               <Button fx:id="searchButton" text="🔍 Tìm kiếm" onAction="#handleSearch" styleClass="button-primary" />
+               <Button fx:id="refreshButton" text="🔄 Làm mới" onAction="#handleRefresh" styleClass="button-secondary" />
+               <Region HBox.hgrow="ALWAYS" />
+               <Button fx:id="deleteButton" text="🗑️ Xóa" onAction="#handleDelete" styleClass="button-danger" />
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TableView fx:id="residentTable" styleClass="table-view">
+         <columns>
+            <TableColumn fx:id="sttColumn" text="STT" prefWidth="50.0" />
+            <TableColumn fx:id="apartmentCodeColumn" text="Mã căn hộ" prefWidth="120.0" />
+            <TableColumn fx:id="householdCodeColumn" text="Mã hộ dân" prefWidth="120.0" />
+            <TableColumn fx:id="fullNameColumn" text="Họ và tên" prefWidth="200.0" />
+            <TableColumn fx:id="idCardColumn" text="CMND/CCCD" prefWidth="120.0" />
+            <TableColumn fx:id="dateOfBirthColumn" text="Ngày sinh" prefWidth="100.0" />
+            <TableColumn fx:id="genderColumn" text="Giới tính" prefWidth="80.0" />
+            <TableColumn fx:id="relationshipColumn" text="Quan hệ" prefWidth="100.0" />
+            <TableColumn fx:id="phoneColumn" text="Số điện thoại" prefWidth="120.0" />
+            <TableColumn fx:id="occupationColumn" text="Nghề nghiệp" prefWidth="150.0" />
+            <TableColumn fx:id="statusColumn" text="Trạng thái" prefWidth="100.0" />
+         </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="card">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label fx:id="totalLabel" text="Tổng số: 0 nhân khẩu" styleClass="label-section" style="-fx-font-size: 16px; -fx-text-fill: #2c3e50;">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
+
+

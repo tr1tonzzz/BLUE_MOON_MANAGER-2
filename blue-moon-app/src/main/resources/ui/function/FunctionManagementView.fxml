@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vn.bluemoon.ui.function.FunctionManagementController" stylesheets="/css/styles.css">
+   <top>
+      <VBox spacing="15.0" styleClass="card" style="-fx-margin: 10px;">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label text="Quản lý chức năng" styleClass="label-subtitle">
+               <font>
+                  <Font name="Arial" size="20.0" />
+               </font>
+            </Label>
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+               <Button fx:id="addButton" text="➕ Thêm" onAction="#handleAdd" styleClass="button-success" />
+               <Button fx:id="editButton" text="✏️ Sửa" onAction="#handleEdit" styleClass="button-primary" />
+               <Button fx:id="deleteButton" text="🗑️ Xóa" onAction="#handleDelete" styleClass="button-danger" />
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TableView fx:id="functionTable" styleClass="table-view">
+         <columns>
+            <TableColumn fx:id="sttColumn" text="STT" prefWidth="50.0" />
+            <TableColumn fx:id="nameColumn" text="Tên chức năng" prefWidth="250.0" />
+            <TableColumn fx:id="functionGroupColumn" text="Nhóm chức năng" prefWidth="150.0" />
+            <TableColumn fx:id="boundaryClassColumn" text="Lớp biên" prefWidth="200.0" />
+         </columns>
+      </TableView>
+   </center>
+</BorderPane>
+

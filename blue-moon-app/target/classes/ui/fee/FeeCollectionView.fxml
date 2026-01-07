@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vn.bluemoon.ui.fee.FeeCollectionController" stylesheets="/css/styles.css">
+   <top>
+      <VBox spacing="15.0" styleClass="card" style="-fx-margin: 10px;">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label text="Quản lý thu phí" styleClass="label-subtitle">
+               <font>
+                  <Font name="Arial" size="20.0" />
+               </font>
+            </Label>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+               <TextField fx:id="searchApartmentCodeField" promptText="Mã căn hộ" prefWidth="120.0" />
+               <TextField fx:id="searchHouseholdCodeField" promptText="Mã hộ dân" prefWidth="120.0" />
+               <TextField fx:id="searchOwnerNameField" promptText="Tên chủ hộ" prefWidth="150.0" />
+               <ComboBox fx:id="searchMonthCombo" promptText="Tháng" prefWidth="80.0" />
+               <ComboBox fx:id="searchYearCombo" promptText="Năm" prefWidth="80.0" />
+               <ComboBox fx:id="searchStatusCombo" promptText="Trạng thái" prefWidth="120.0" />
+               <Button fx:id="searchButton" text="🔍 Tìm kiếm" onAction="#handleSearch" styleClass="button-primary" />
+               <Button fx:id="refreshButton" text="🔄 Làm mới" onAction="#handleRefresh" styleClass="button-secondary" />
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <TableView fx:id="feeTable" styleClass="table-view">
+         <columns>
+            <TableColumn fx:id="sttColumn" text="STT" prefWidth="50.0" />
+            <TableColumn fx:id="apartmentCodeColumn" text="Mã căn hộ" prefWidth="120.0" />
+            <TableColumn fx:id="householdCodeColumn" text="Mã hộ dân" prefWidth="120.0" />
+            <TableColumn fx:id="ownerNameColumn" text="Tên chủ hộ" prefWidth="200.0" />
+            <TableColumn fx:id="monthYearColumn" text="Tháng/Năm" prefWidth="100.0" />
+            <TableColumn fx:id="amountColumn" text="Số tiền" prefWidth="150.0" />
+            <TableColumn fx:id="statusColumn" text="Trạng thái" prefWidth="120.0" />
+            <TableColumn fx:id="paymentDateColumn" text="Ngày thanh toán" prefWidth="120.0" />
+         </columns>
+      </TableView>
+   </center>
+   <bottom>
+      <HBox spacing="20.0" alignment="CENTER_LEFT" styleClass="card">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <Label fx:id="totalLabel" text="Tổng số: 0" styleClass="label-section" style="-fx-font-size: 16px; -fx-text-fill: #2c3e50;">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="paidLabel" text="Đã thu: 0" styleClass="label-success" style="-fx-font-size: 16px; -fx-font-weight: bold;">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="unpaidLabel" text="Chưa thu: 0" styleClass="label-error" style="-fx-font-size: 16px; -fx-font-weight: bold;">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="addFeeButton" text="➕ Thêm thu phí" onAction="#handleAddFee" styleClass="button-primary" />
+            <Button fx:id="markPaidButton" text="✅ Đánh dấu đã thu phí" onAction="#handleMarkPaid" styleClass="button-success" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
+

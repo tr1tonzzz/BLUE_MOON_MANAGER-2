@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông tin cá nhân - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Thông tin cá nhân</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); max-width: 800px; margin: 0 auto;">
+            <h2 style="margin-bottom: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Thông tin cá nhân</h2>
+            
+            <div class="info-panel" style="background: #f9f9f9; padding: 25px; border-radius: 8px;">
+                <div class="info-row" style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                    <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Tên đăng nhập:</span>
+                    <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${user.username}">-</span>
+                </div>
+                <div class="info-row" style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                    <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Email:</span>
+                    <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${user.email}">-</span>
+                </div>
+                <div class="info-row" style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                    <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Họ và tên:</span>
+                    <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${user.fullName}">-</span>
+                </div>
+                <div class="info-row" style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                    <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Số điện thoại:</span>
+                    <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${user.phone != null ? user.phone : '-'}">-</span>
+                </div>
+                <div class="info-row" style="padding: 15px 0;">
+                    <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Địa chỉ:</span>
+                    <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${user.address != null ? user.address : '-'}">-</span>
+                </div>
+            </div>
+            
+            <!-- Hiển thị thông tin resident nếu đã đăng ký -->
+            <div th:if="${hasResident}" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
+                <h3 style="margin-bottom: 20px; color: #667eea;">Thông tin cư dân</h3>
+                <div class="info-panel" style="background: #f9f9f9; padding: 25px; border-radius: 8px;">
+                    <div class="info-row" style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;">
+                        <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">CMND/CCCD:</span>
+                        <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${resident.idCard}">-</span>
+                    </div>
+                    <div class="info-row" style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;" th:if="${resident.apartmentCode != null}">
+                        <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Mã căn hộ:</span>
+                        <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${resident.apartmentCode}">-</span>
+                    </div>
+                    <div class="info-row" style="padding: 15px 0; border-bottom: 1px solid #e0e0e0;" th:if="${resident.householdCode != null}">
+                        <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Mã hộ:</span>
+                        <span class="value" style="color: #333; background: white; padding: 8px 15px; border-radius: 5px; display: inline-block;" th:text="${resident.householdCode}">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form đăng ký thông tin cá nhân nếu chưa đăng ký -->
+            <div th:if="${!hasResident}" style="margin-top: 30px; padding-top: 30px; border-top: 2px solid #e0e0e0;">
+                <h3 style="margin-bottom: 20px; color: #667eea;">Đăng ký thông tin cư dân</h3>
+                <p style="color: #666; margin-bottom: 20px;">Vui lòng điền thông tin để đăng ký làm cư dân trong hệ thống quản lý chung cư.</p>
+                
+                <form th:action="@{/personal-info/register}" method="post" style="background: #f9f9f9; padding: 25px; border-radius: 8px;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Họ và tên <span style="color: red;">*</span></label>
+                        <input type="text" name="fullName" th:value="${user.fullName}" required 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">CMND/CCCD <span style="color: red;">*</span></label>
+                        <input type="text" name="idCard" required 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Ngày sinh</label>
+                        <input type="date" name="dateOfBirth" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Giới tính</label>
+                        <select name="gender" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                            <option value="">-- Chọn giới tính --</option>
+                            <option value="male">Nam</option>
+                            <option value="female">Nữ</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Số điện thoại</label>
+                        <input type="text" name="phone" th:value="${user.phone}" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Email</label>
+                        <input type="email" name="email" th:value="${user.email}" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Nghề nghiệp</label>
+                        <input type="text" name="occupation" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Mã căn hộ</label>
+                        <input type="text" name="apartmentCode" placeholder="VD: A1-0101" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; color: #667eea; margin-bottom: 5px;">Mã hộ</label>
+                        <input type="text" name="householdCode" placeholder="VD: A1-0101-HH" 
+                               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                    </div>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button type="submit" class="btn btn-primary" style="margin-right: 10px;">Đăng ký</button>
+                        <a th:href="@{/main}" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Thông báo lỗi/thành công -->
+            <div th:if="${error}" style="margin-top: 20px; padding: 15px; background: #fee; border: 1px solid #fcc; border-radius: 5px; color: #c33;">
+                <span th:text="${error}"></span>
+            </div>
+            <div th:if="${success}" style="margin-top: 20px; padding: 15px; background: #efe; border: 1px solid #cfc; border-radius: 5px; color: #3c3;">
+                <span th:text="${success}"></span>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <a th:href="@{/change-password}" class="btn btn-primary" style="margin-right: 10px;">Đổi mật khẩu</a>
+                <a th:href="@{/main}" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

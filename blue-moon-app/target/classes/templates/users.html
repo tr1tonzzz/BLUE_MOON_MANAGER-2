@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý người dùng - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Quản lý người dùng</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="margin-bottom: 20px; color: #333;">Quản lý người dùng</h2>
+            
+            <!-- Search Form -->
+            <div class="search-form" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <form method="get" th:action="@{/users}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end;">
+                    <div class="form-group" style="margin: 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Tên đăng nhập</label>
+                        <input type="text" name="username" th:value="${searchUsername}" placeholder="Tên đăng nhập" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Email</label>
+                        <input type="text" name="email" th:value="${searchEmail}" placeholder="Email" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Họ và tên</label>
+                        <input type="text" name="fullName" th:value="${searchFullName}" placeholder="Họ và tên" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Số điện thoại</label>
+                        <input type="text" name="phone" th:value="${searchPhone}" placeholder="Số điện thoại" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin: 0; display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Tìm kiếm</button>
+                        <a th:href="@{/users}" class="btn btn-secondary" style="flex: 1; text-align: center; text-decoration: none;">Làm mới</a>
+                    </div>
+                </form>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            
+            <!-- Users Table -->
+            <div style="overflow-x: auto;">
+                <table class="data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">STT</th>
+                            <th style="width: auto;">Tên đăng nhập</th>
+                            <th style="width: auto;">Email</th>
+                            <th style="width: auto;">Họ và tên</th>
+                            <th style="width: auto;">Số điện thoại</th>
+                            <th style="width: 120px;">Trạng thái</th>
+                            <th style="width: 100px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${users == null or users.isEmpty()}">
+                            <td colspan="7" style="text-align: center; padding: 30px; color: #666;">Không có dữ liệu</td>
+                        </tr>
+                        <tr th:each="u, iterStat : ${users}">
+                            <td style="text-align: center;" th:text="${iterStat.count}">1</td>
+                            <td th:text="${u.username}">-</td>
+                            <td th:text="${u.email}">-</td>
+                            <td th:text="${u.fullName}">-</td>
+                            <td th:text="${u.phone != null ? u.phone : '-'}">-</td>
+                            <td>
+                                <span th:if="${u.isActive}" class="badge badge-success">Hoạt động</span>
+                                <span th:unless="${u.isActive}" class="badge badge-danger">Vô hiệu hóa</span>
+                            </td>
+                            <td>
+                                <form th:action="@{/users/delete}" method="post" style="display: inline;" th:onsubmit="return confirm('Bạn có chắc chắn muốn xóa người dùng này? Toàn bộ dữ liệu liên quan sẽ bị xóa vĩnh viễn.');">
+                                    <input type="hidden" name="id" th:value="${u.id}">
+                                    <button type="submit" class="btn btn-sm" style="background-color: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

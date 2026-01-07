@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý nhân khẩu - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Quản lý nhân khẩu</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="margin-bottom: 20px; color: #333;">Quản lý nhân khẩu</h2>
+            
+            <!-- Search Form -->
+            <div class="search-form" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <form method="get" th:action="@{/residents}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end;">
+                    <div class="form-group" style="margin: 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Tên nhân khẩu</label>
+                        <input type="text" name="name" th:value="${searchName}" placeholder="Tên nhân khẩu" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Mã căn hộ</label>
+                        <input type="text" name="apartmentCode" th:value="${searchApartmentCode}" placeholder="Mã căn hộ" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Mã hộ</label>
+                        <input type="text" name="householdCode" th:value="${searchHouseholdCode}" placeholder="Mã hộ" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin: 0; display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">Tìm kiếm</button>
+                        <a th:href="@{/residents}" class="btn btn-secondary" style="flex: 1; text-align: center; text-decoration: none;">Làm mới</a>
+                    </div>
+                </form>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            
+            <!-- Add Resident Button -->
+            <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; color: #333;">Danh sách nhân khẩu</h3>
+                <button type="button" onclick="openAddResidentModal()" class="btn btn-primary" style="padding: 10px 20px;">
+                    + Thêm nhân khẩu
+                </button>
+            </div>
+            
+            <!-- Residents Table -->
+            <div style="overflow-x: auto;">
+                <table class="data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">STT</th>
+                            <th style="width: auto;">Mã căn hộ</th>
+                            <th style="width: auto;">Mã hộ</th>
+                            <th style="width: auto;">Họ và tên</th>
+                            <th style="width: auto;">CMND/CCCD</th>
+                            <th style="width: auto;">Ngày sinh</th>
+                            <th style="width: auto;">Giới tính</th>
+                            <th style="width: auto;">Quan hệ</th>
+                            <th style="width: auto;">Số điện thoại</th>
+                            <th style="width: auto;">Nghề nghiệp</th>
+                            <th style="width: 100px;">Trạng thái</th>
+                            <th style="width: 120px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${residents == null or residents.isEmpty()}">
+                            <td colspan="12" style="text-align: center; padding: 30px; color: #666;">Không có dữ liệu</td>
+                        </tr>
+                        <tr th:each="resident, iterStat : ${residents}">
+                            <td style="text-align: center;" th:text="${iterStat.count}">1</td>
+                            <td th:text="${resident.apartmentCode}">-</td>
+                            <td th:text="${resident.householdCode}">-</td>
+                            <td th:text="${resident.fullName}">-</td>
+                            <td th:text="${resident.idCard != null ? resident.idCard : '-'}">-</td>
+                            <td th:text="${resident.dateOfBirth != null ? #temporals.format(resident.dateOfBirth, 'dd/MM/yyyy') : '-'}">-</td>
+                            <td th:text="${resident.gender != null ? resident.genderDisplay : '-'}">-</td>
+                            <td th:text="${resident.relationship != null ? resident.relationship : '-'}">-</td>
+                            <td th:text="${resident.phone != null ? resident.phone : '-'}">-</td>
+                            <td th:text="${resident.occupation != null ? resident.occupation : '-'}">-</td>
+                            <td>
+                                <span th:if="${resident.status == 'active'}" class="badge badge-success">Hoạt động</span>
+                                <span th:if="${resident.status == 'temporary_resident'}" class="badge badge-warning">Tạm trú</span>
+                                <span th:if="${resident.status == 'temporary_absent'}" class="badge badge-info">Tạm vắng</span>
+                                <span th:if="${resident.status != null and resident.status != 'active' and resident.status != 'temporary_resident' and resident.status != 'temporary_absent'}" 
+                                      class="badge badge-danger" th:text="${resident.statusDisplay}">-</span>
+                            </td>
+                            <td style="width: 180px;">
+                                <a th:href="@{/residents/detail(id=${resident.id})}" class="btn btn-sm btn-primary" style="text-decoration: none; padding: 6px 12px; margin-right: 5px;">Xem chi tiết</a>
+                                <form th:action="@{/residents/delete}" method="post" style="display: inline;" th:onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhân khẩu này? Toàn bộ dữ liệu liên quan sẽ bị xóa vĩnh viễn.');">
+                                    <input type="hidden" name="id" th:value="${resident.id}">
+                                    <button type="submit" class="btn btn-sm" style="background-color: #dc3545; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer;">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Resident Modal -->
+    <div id="addResidentModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 5% auto; padding: 30px; border-radius: 10px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0; color: #333;">Thêm nhân khẩu mới</h2>
+                <button type="button" onclick="closeAddResidentModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
+            </div>
+            
+            <form method="post" th:action="@{/residents/add}" id="addResidentForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <!-- Relationship - Must be first to control other fields -->
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Quan hệ với chủ hộ *</label>
+                        <select name="relationship" id="relationshipSelect" onchange="toggleHouseholdFields()" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">-- Chọn quan hệ --</option>
+                            <option value="Chủ hộ">Chủ hộ</option>
+                            <option value="Thành viên">Thành viên</option>
+                            <option value="Vợ/Chồng">Vợ/Chồng</option>
+                            <option value="Con">Con</option>
+                            <option value="Bố/Mẹ">Bố/Mẹ</option>
+                            <option value="Anh/Chị/Em">Anh/Chị/Em</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Household Selection - Shown when NOT "Chủ hộ" -->
+                    <div class="form-group" id="householdSelectionGroup" style="grid-column: 1 / -1; display: none;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Hộ dân *</label>
+                        <select name="householdId" id="householdIdSelect" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">-- Chọn hộ dân --</option>
+                            <option th:each="household : ${households}" 
+                                    th:value="${household.householdId}"
+                                    th:text="${household.fullName + ' - ' + household.apartmentCode + ' - ' + household.householdCode}">
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <!-- Apartment Code - Shown when "Chủ hộ" -->
+                    <div class="form-group" id="apartmentCodeGroup" style="display: none;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mã căn hộ *</label>
+                        <input type="text" name="apartmentCode" id="apartmentCodeInput" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="VD: A1-1234">
+                    </div>
+                    
+                    <!-- Household Code - Shown when "Chủ hộ" -->
+                    <div class="form-group" id="householdCodeGroup" style="display: none;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mã hộ *</label>
+                        <input type="text" name="householdCode" id="householdCodeInput" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="VD: A1-1234-HH">
+                    </div>
+                    
+                    <!-- Full Name -->
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Họ và tên *</label>
+                        <input type="text" name="fullName" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <!-- ID Card -->
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">CMND/CCCD *</label>
+                        <input type="text" name="idCard" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <!-- Date of Birth -->
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Ngày sinh</label>
+                        <input type="date" name="dateOfBirth" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <!-- Gender -->
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Giới tính</label>
+                        <select name="gender" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">-- Chọn giới tính --</option>
+                            <option value="male">Nam</option>
+                            <option value="female">Nữ</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Số điện thoại</label>
+                        <input type="tel" name="phone" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
+                        <input type="email" name="email" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <!-- Occupation -->
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Nghề nghiệp</label>
+                        <input type="text" name="occupation" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Trạng thái</label>
+                        <select name="status" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="active">Hoạt động</option>
+                            <option value="temporary_resident">Tạm trú</option>
+                            <option value="temporary_absent">Tạm vắng</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Permanent Address -->
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Địa chỉ thường trú</label>
+                        <textarea name="permanentAddress" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical;"></textarea>
+                    </div>
+                    
+                    <!-- Temporary Address -->
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Địa chỉ tạm trú</label>
+                        <textarea name="temporaryAddress" rows="2" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; resize: vertical;"></textarea>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" onclick="closeAddResidentModal()" class="btn btn-secondary" style="padding: 10px 20px;">Hủy</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 10px 20px;">Thêm nhân khẩu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function openAddResidentModal() {
+            document.getElementById('addResidentModal').style.display = 'block';
+            toggleHouseholdFields(); // Initialize field visibility
+        }
+        
+        function closeAddResidentModal() {
+            document.getElementById('addResidentModal').style.display = 'none';
+            document.getElementById('addResidentForm').reset();
+            toggleHouseholdFields(); // Reset field visibility
+        }
+        
+        function toggleHouseholdFields() {
+            const relationship = document.getElementById('relationshipSelect').value;
+            const householdSelectionGroup = document.getElementById('householdSelectionGroup');
+            const householdIdSelect = document.getElementById('householdIdSelect');
+            const apartmentCodeGroup = document.getElementById('apartmentCodeGroup');
+            const apartmentCodeInput = document.getElementById('apartmentCodeInput');
+            const householdCodeGroup = document.getElementById('householdCodeGroup');
+            const householdCodeInput = document.getElementById('householdCodeInput');
+            
+            if (relationship === 'Chủ hộ') {
+                // Show apartment code and household code fields
+                householdSelectionGroup.style.display = 'none';
+                householdIdSelect.removeAttribute('required');
+                householdIdSelect.value = '';
+                
+                apartmentCodeGroup.style.display = 'block';
+                apartmentCodeInput.setAttribute('required', 'required');
+                
+                householdCodeGroup.style.display = 'block';
+                householdCodeInput.setAttribute('required', 'required');
+            } else if (relationship !== '') {
+                // Show household selection dropdown
+                householdSelectionGroup.style.display = 'block';
+                householdIdSelect.setAttribute('required', 'required');
+                
+                apartmentCodeGroup.style.display = 'none';
+                apartmentCodeInput.removeAttribute('required');
+                apartmentCodeInput.value = '';
+                
+                householdCodeGroup.style.display = 'none';
+                householdCodeInput.removeAttribute('required');
+                householdCodeInput.value = '';
+            } else {
+                // Hide all household-related fields
+                householdSelectionGroup.style.display = 'none';
+                householdIdSelect.removeAttribute('required');
+                householdIdSelect.value = '';
+                
+                apartmentCodeGroup.style.display = 'none';
+                apartmentCodeInput.removeAttribute('required');
+                apartmentCodeInput.value = '';
+                
+                householdCodeGroup.style.display = 'none';
+                householdCodeInput.removeAttribute('required');
+                householdCodeInput.value = '';
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('addResidentModal');
+            if (event.target == modal) {
+                closeAddResidentModal();
+            }
+        }
+    </script>
+</body>
+</html>
+

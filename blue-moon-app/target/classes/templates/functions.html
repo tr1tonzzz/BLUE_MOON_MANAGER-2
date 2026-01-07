@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý chức năng - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Quản lý chức năng</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="margin-bottom: 20px; color: #333;">Quản lý chức năng</h2>
+            
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            
+            <!-- Functions Table -->
+            <div style="overflow-x: auto;">
+                <table class="data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">STT</th>
+                            <th style="width: auto;">Tên chức năng</th>
+                            <th style="width: auto;">Nhóm chức năng</th>
+                            <th style="width: auto;">Lớp biên</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${functions == null or functions.isEmpty()}">
+                            <td colspan="4" style="text-align: center; padding: 30px; color: #666;">Không có dữ liệu</td>
+                        </tr>
+                        <tr th:each="func, iterStat : ${functions}">
+                            <td style="text-align: center;" th:text="${iterStat.count}">1</td>
+                            <td th:text="${func.name}">-</td>
+                            <td th:text="${func.functionGroupName != null ? func.functionGroupName : '-'}">-</td>
+                            <td style="font-family: monospace; font-size: 12px;" th:text="${func.boundaryClass}">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

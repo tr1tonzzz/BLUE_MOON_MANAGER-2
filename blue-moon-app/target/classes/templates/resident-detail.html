@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết cư dân - Blue Moon</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Blue Moon - Chi tiết cư dân</h1>
+            <div class="nav-user">
+                <span th:text="${user.fullName}">Người dùng</span>
+                <a th:href="@{/residents}" class="btn btn-sm">Quản lý nhân khẩu</a>
+                <a th:href="@{/main}" class="btn btn-sm">Trang chủ</a>
+                <a th:href="@{/logout}" class="btn btn-sm">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); max-width: 1200px; margin: 0 auto;">
+            <h2 style="margin-bottom: 30px; color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px;">Thông tin chi tiết cư dân</h2>
+            
+            <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+            
+            <div th:if="${resident != null}">
+                <!-- Thông tin cơ bản -->
+                <div class="info-panel" style="margin-bottom: 20px;">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">Thông tin cơ bản</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Họ và tên:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.fullName}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">CMND/CCCD:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.idCard != null ? resident.idCard : '-'}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Ngày sinh:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.dateOfBirth != null ? #temporals.format(resident.dateOfBirth, 'dd/MM/yyyy') : '-'}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Giới tính:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.gender != null ? resident.genderDisplay : '-'}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Quan hệ:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.relationship != null ? resident.relationship : '-'}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Số điện thoại:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.phone != null ? resident.phone : '-'}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Email:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.email != null ? resident.email : '-'}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Nghề nghiệp:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.occupation != null ? resident.occupation : '-'}">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Thông tin địa chỉ -->
+                <div class="info-panel" style="margin-bottom: 20px;">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">Thông tin địa chỉ</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Mã căn hộ:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.apartmentCode}">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Mã hộ:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.householdCode}">-</span>
+                        </div>
+                        <div class="info-row" style="grid-column: 1 / -1;">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Địa chỉ thường trú:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.permanentAddress != null ? resident.permanentAddress : '-'}">-</span>
+                        </div>
+                        <div class="info-row" style="grid-column: 1 / -1;">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Địa chỉ tạm trú:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.temporaryAddress != null ? resident.temporaryAddress : '-'}">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Trạng thái tạm trú/tạm vắng -->
+                <div class="info-panel" style="margin-bottom: 20px;">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">Trạng thái</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="info-row">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Trạng thái hiện tại:</span>
+                            <span>
+                                <span th:if="${resident.status == 'active'}" class="badge badge-success">Hoạt động</span>
+                                <span th:if="${resident.status == 'temporary_resident'}" class="badge badge-warning">Tạm trú</span>
+                                <span th:if="${resident.status == 'temporary_absent'}" class="badge badge-info">Tạm vắng</span>
+                                <span th:if="${resident.status != null and resident.status != 'active' and resident.status != 'temporary_resident' and resident.status != 'temporary_absent'}" 
+                                      class="badge badge-danger" th:text="${resident.statusDisplay}">-</span>
+                            </span>
+                        </div>
+                        <div class="info-row" th:if="${resident.status == 'temporary_resident'}">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Tạm trú từ:</span>
+                            <span class="value" style="color: #333;" 
+                                  th:text="${resident.temporaryResidentFrom != null ? #temporals.format(resident.temporaryResidentFrom, 'dd/MM/yyyy') : '-'}">-</span>
+                        </div>
+                        <div class="info-row" th:if="${resident.status == 'temporary_resident'}">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Tạm trú đến:</span>
+                            <span class="value" style="color: #333;" 
+                                  th:text="${resident.temporaryResidentTo != null ? #temporals.format(resident.temporaryResidentTo, 'dd/MM/yyyy') : '-'}">-</span>
+                        </div>
+                        <div class="info-row" th:if="${resident.status == 'temporary_absent'}">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Tạm vắng từ:</span>
+                            <span class="value" style="color: #333;" 
+                                  th:text="${resident.temporaryAbsentFrom != null ? #temporals.format(resident.temporaryAbsentFrom, 'dd/MM/yyyy') : '-'}">-</span>
+                        </div>
+                        <div class="info-row" th:if="${resident.status == 'temporary_absent'}">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Tạm vắng đến:</span>
+                            <span class="value" style="color: #333;" 
+                                  th:text="${resident.temporaryAbsentTo != null ? #temporals.format(resident.temporaryAbsentTo, 'dd/MM/yyyy') : '-'}">-</span>
+                        </div>
+                        <div class="info-row" th:if="${resident.temporaryReason != null}" style="grid-column: 1 / -1;">
+                            <span class="label" style="font-weight: bold; color: #667eea; min-width: 150px;">Lý do:</span>
+                            <span class="value" style="color: #333;" th:text="${resident.temporaryReason}">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form đăng ký tạm trú/tạm vắng -->
+                <div class="info-panel" style="margin-bottom: 20px;">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">Đăng ký tạm trú / Tạm vắng</h3>
+                    
+                    <!-- Form Tạm trú -->
+                    <div style="margin-bottom: 30px; padding: 20px; background: #fff3cd; border-radius: 8px;">
+                        <h4 style="margin-bottom: 15px; color: #856404;">Đăng ký tạm trú</h4>
+                        <form method="post" th:action="@{/residents/register-temporary-resident}" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end;">
+                            <input type="hidden" name="residentId" th:value="${resident.id}">
+                            <div class="form-group" style="margin: 0;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Từ ngày *</label>
+                                <input type="date" name="fromDate" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Đến ngày *</label>
+                                <input type="date" name="toDate" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Lý do</label>
+                                <input type="text" name="reason" placeholder="Lý do tạm trú" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="padding: 10px 20px;">Đăng ký tạm trú</button>
+                        </form>
+                    </div>
+                    
+                    <!-- Form Tạm vắng -->
+                    <div style="margin-bottom: 30px; padding: 20px; background: #d1ecf1; border-radius: 8px;">
+                        <h4 style="margin-bottom: 15px; color: #0c5460;">Đăng ký tạm vắng</h4>
+                        <form method="post" th:action="@{/residents/register-temporary-absent}" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end;">
+                            <input type="hidden" name="residentId" th:value="${resident.id}">
+                            <div class="form-group" style="margin: 0;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Từ ngày *</label>
+                                <input type="date" name="fromDate" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Đến ngày *</label>
+                                <input type="date" name="toDate" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px;">Lý do</label>
+                                <input type="text" name="reason" placeholder="Lý do tạm vắng" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="padding: 10px 20px; background: #17a2b8;">Đăng ký tạm vắng</button>
+                        </form>
+                    </div>
+                    
+                    <!-- Hủy tạm trú/tạm vắng -->
+                    <div th:if="${resident.status == 'temporary_resident' or resident.status == 'temporary_absent'}">
+                        <form method="post" th:action="@{/residents/cancel-temporary}" style="display: inline-block;">
+                            <input type="hidden" name="residentId" th:value="${resident.id}">
+                            <button type="submit" class="btn btn-secondary" style="padding: 10px 20px;">Hủy tạm trú/tạm vắng</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Nút quay lại -->
+                <div style="margin-top: 30px; text-align: center;">
+                    <a th:href="@{/residents}" class="btn btn-secondary" style="padding: 12px 30px; text-decoration: none;">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

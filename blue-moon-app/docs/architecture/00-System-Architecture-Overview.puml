@@ -1,0 +1,149 @@
+@startuml System Architecture Overview - Blue Moon Apartment Management System
+
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam linetype ortho
+skinparam defaultFontSize 12
+skinparam defaultFontName Arial
+skinparam roundcorner 10
+
+title <size:18><b>Blue Moon Apartment Management System</b>\nArchitecture Overview</size>
+
+left to right direction
+
+' Actors - Bên trái giữa màn hình
+rectangle " ACTORS" #LightBlue {
+  actor " Quản trị viên" as Admin
+  actor " Người dùng" as User
+  actor " Ban quản trị" as Manager
+}
+
+' Presentation Layer - Ở giữa
+rectangle " PRESENTATION LAYER" #LightBlue {
+  component [ Login View] as LoginView
+  component [ Main View] as MainView
+  component [ User Management] as UserMgmt
+  component [ Resident Management] as ResidentMgmt
+  component [ Fee Collection] as FeeMgmt
+  component [ Payment] as PaymentView
+  component [ Personal Info] as PersonalInfo
+  component [️ Function Management] as FunctionMgmt
+}
+
+' Business Logic Layer - Ở giữa
+rectangle " BUSINESS LOGIC LAYER" #LightBlue {
+  component [ Auth Service] as AuthService
+  component [ User Service] as UserService
+  component [ Resident Service] as ResidentService
+  component [ Fee Service] as FeeService
+  component [ Payment Service] as PaymentService
+  component [ Personal Service] as PersonalService
+  component [️ Function Service] as FunctionService
+  
+  component [ Session Manager] as SessionMgr
+  component [ Authorization] as Authz
+  component [ Password Hasher] as PwdHasher
+  component [ Validators] as Validators
+}
+
+' Data Access Layer - Ở giữa
+rectangle " DATA ACCESS LAYER" #LightBlue {
+  component [ User\nRepository] as UserRepo
+  component [ Resident\nRepository] as ResidentRepo
+  component [ Fee\nRepository] as FeeRepo
+  component [ Group\nRepository] as GroupRepo
+  component [️ Function\nRepository] as FunctionRepo
+  component [ Menu\nRepository] as MenuRepo
+  
+  component [ JDBC Utils] as JdbcUtils
+}
+
+' Database - Bên phải giữa màn hình
+database " PostgreSQL" as PostgreSQL #LightBlue {
+  entity "users" as UsersTable
+  entity "residents" as ResidentsTable
+  entity "households" as HouseholdsTable
+  entity "apartments" as ApartmentsTable
+  entity "fee_collections" as FeesTable
+  entity "groups" as GroupsTable
+  entity "functions" as FunctionsTable
+}
+
+' Utilities - Ở dưới
+rectangle " UTILITIES" #Lavender {
+  component [ Error Dialog] as ErrorDialog
+  component [ Email Sender] as EmailSender
+  component [ Token Generator] as TokenGen
+}
+
+' ============================================
+' CONNECTIONS - Mũi tên thẳng
+' ============================================
+
+' Actors → Presentation
+Admin --> LoginView
+User --> LoginView
+Manager --> LoginView
+
+' Presentation → Business Logic
+LoginView --> AuthService
+MainView --> UserService
+MainView --> ResidentService
+MainView --> FeeService
+UserMgmt --> UserService
+ResidentMgmt --> ResidentService
+FeeMgmt --> FeeService
+PaymentView --> PaymentService
+PersonalInfo --> PersonalService
+FunctionMgmt --> FunctionService
+
+' Business Logic → Security/Validation
+AuthService --> SessionMgr
+AuthService --> PwdHasher
+AuthService --> Authz
+UserService --> Validators
+ResidentService --> Validators
+FeeService --> Validators
+PaymentService --> Validators
+
+' Business Logic → Data Access
+AuthService --> UserRepo
+UserService --> UserRepo
+UserService --> ResidentRepo
+UserService --> FeeRepo
+ResidentService --> ResidentRepo
+FeeService --> FeeRepo
+FeeService --> ResidentRepo
+PaymentService --> FeeRepo
+PersonalService --> ResidentRepo
+FunctionService --> FunctionRepo
+FunctionService --> MenuRepo
+
+' Data Access → Database
+UserRepo --> JdbcUtils
+ResidentRepo --> JdbcUtils
+FeeRepo --> JdbcUtils
+GroupRepo --> JdbcUtils
+FunctionRepo --> JdbcUtils
+MenuRepo --> JdbcUtils
+
+JdbcUtils --> UsersTable
+JdbcUtils --> ResidentsTable
+JdbcUtils --> HouseholdsTable
+JdbcUtils --> ApartmentsTable
+JdbcUtils --> FeesTable
+JdbcUtils --> GroupsTable
+JdbcUtils --> FunctionsTable
+
+' Business Logic → Utilities
+AuthService --> ErrorDialog
+UserService --> ErrorDialog
+ResidentService --> ErrorDialog
+FeeService --> ErrorDialog
+PaymentService --> ErrorDialog
+AuthService --> EmailSender
+PaymentService --> EmailSender
+AuthService --> TokenGen
+
+
+@enduml
